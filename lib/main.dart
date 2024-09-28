@@ -1,257 +1,4 @@
-// import 'package:flutter/material.dart';
-// import 'package:intl/intl.dart';
-// import 'package:bmi/z_score_data.dart';
-// import 'package:bmi/find_z_score.dart';
-//
-// void main() {
-//   runApp(AgeCalculatorApp());
-// }
-//
-// class AgeCalculatorApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Age Calculator',
-//       theme: ThemeData(
-//         brightness: Brightness.dark, // Set to dark theme
-//         primarySwatch: Colors.blue,
-//         scaffoldBackgroundColor: Colors.black, // Set background color
-//         textTheme: TextTheme(
-//             bodyLarge: TextStyle(color: Colors.white), // Updated parameter
-//             bodyMedium: TextStyle(color: Colors.white), // Updated parameter
-//             bodySmall: TextStyle(color: Colors.white), // Updated parameter
-//             titleLarge: TextStyle(color: Colors.white, fontSize: 20),
-//         ),
-//         inputDecorationTheme: InputDecorationTheme(
-//           fillColor: Colors.grey[800],
-//           filled: true,
-//           border: OutlineInputBorder(
-//             borderRadius: BorderRadius.circular(20.0), // Rounded corners
-//             borderSide: BorderSide.none, // Remove underline
-//           ),
-//           focusedBorder: OutlineInputBorder(
-//             borderRadius: BorderRadius.circular(20.0), // Rounded corners
-//             borderSide: BorderSide(color: Colors.blue),
-//           ),
-//           enabledBorder: OutlineInputBorder(
-//             borderRadius: BorderRadius.circular(20.0), // Rounded corners
-//             borderSide: BorderSide(color: Colors.grey[700]!),
-//           ),
-//         ),
-//       ),
-//
-//       home: AgeCalculatorScreen(),
-//     );
-//   }
-// }
-//
-// class AgeCalculatorScreen extends StatefulWidget {
-//   @override
-//   _AgeCalculatorScreenState createState() => _AgeCalculatorScreenState();
-// }
-//
-// class _AgeCalculatorScreenState extends State<AgeCalculatorScreen> {
-//   final _dobController = TextEditingController();
-//   final _weightController = TextEditingController();
-//   final _heightController = TextEditingController();
-//   DateTime? _selectedDate;
-//   String _age = '';
-//   String _bmi = '';
-//   String? _gender;
-//   double? _zScore;
-//
-//
-//
-//   @override
-//   void dispose() {
-//     _dobController.dispose();
-//     _weightController.dispose();
-//     _heightController.dispose();
-//     super.dispose();
-//   }
-//
-//   Future<void> _selectDate(BuildContext context) async {
-//     final DateTime? picked = await showDatePicker(
-//       context: context,
-//       initialDate: DateTime.now(),
-//       firstDate: DateTime(1900),
-//       lastDate: DateTime.now(),
-//     );
-//     if (picked != null && picked != _selectedDate) {
-//       setState(() {
-//         _selectedDate = picked;
-//         _dobController.text = DateFormat('yyyy-MM-dd').format(picked);
-//         _calculateAgeAndBMI();
-//       });
-//     }
-//   }
-//
-//   void _calculateAgeAndBMI() {
-//     if (_selectedDate != null) {
-//       final currentDate = DateTime.now();
-//       int years = currentDate.year - _selectedDate!.year;
-//       int months = currentDate.month - _selectedDate!.month;
-//       int days = currentDate.day - _selectedDate!.day;
-//
-//       // Adjust for negative months and days
-//       if (days < 0) {
-//         months--;
-//         days += DateTime(currentDate.year, currentDate.month, 0).day;
-//       }
-//       if (months < 0) {
-//         years--;
-//         months += 12;
-//       }
-//
-//       // Formatting the age
-//       if (years > 0) {
-//         double decimalMonths = months / 12.0;
-//         setState(() {
-//           _age = '${(years + decimalMonths).toStringAsFixed(1)}y';
-//         });
-//       } else if (months > 0) {
-//         setState(() {
-//           _age = '${months}m';
-//         });
-//       } else if (days >= 7) {
-//         int weeks = days ~/ 7;
-//         setState(() {
-//           _age = '${weeks}w';
-//         });
-//       } else {
-//         setState(() {
-//           _age = '${days}d';
-//         });
-//       }
-//     }
-//
-//     // Calculate BMI
-//     double weight = double.tryParse(_weightController.text) ?? 0;
-//     double height = double.tryParse(_heightController.text) ?? 0;
-//
-//     if (weight > 0 && height > 0) {
-//       double heightInMeters = height / 100;
-//       double bmiValue = weight / (heightInMeters * heightInMeters);
-//       setState(() {
-//         _bmi = bmiValue.toStringAsFixed(1);
-//         _calculateZScore(bmiValue);
-//       });
-//     }
-//   }
-//
-//   void _calculateZScore(double bmi) {
-//     String ageInDays = convertAgeToDays(_age);
-//     if (_gender != null) {
-//       final zScoreData = _gender == 'Male' ? zScoreDataForBoys : zScoreDataForGirls;
-//       double? expectedBmi = zScoreData[ageInDays]?["1"]; // Assuming "1" for example
-//
-//       if (expectedBmi != null) {
-//         setState(() {
-//           _zScore = (bmi - expectedBmi) / expectedBmi;
-//         });
-//       }
-//     }
-//   }
-//
-//   String convertAgeToDays(String age) {
-//     // Simple conversion logic for demonstration; update as necessary
-//     return "0d"; // Replace with actual conversion logic
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text('Age and BMI Calculator'),
-//       ),
-//       body: Padding(
-//         padding: const EdgeInsets.all(16.0),
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             TextFormField(
-//               controller: _dobController,
-//               readOnly: true,
-//               decoration: InputDecoration(
-//                 labelText: 'Date of Birth',
-//                 hintText: 'Select your date of birth',
-//               ),
-//               onTap: () => _selectDate(context),
-//             ),
-//             SizedBox(height: 20),
-//             TextFormField(
-//               controller: _weightController,
-//               keyboardType: TextInputType.number,
-//               decoration: InputDecoration(
-//                 labelText: 'Weight (kg)',
-//                 hintText: 'Enter your weight in kilograms',
-//               ),
-//               onChanged: (value) => _calculateAgeAndBMI(),
-//             ),
-//             SizedBox(height: 20),
-//             TextFormField(
-//               controller: _heightController,
-//               keyboardType: TextInputType.number,
-//               decoration: InputDecoration(
-//                 labelText: 'Height (cm)',
-//                 hintText: 'Enter your height in centimeters',
-//               ),
-//               onChanged: (value) => _calculateAgeAndBMI(),
-//             ),
-//             SizedBox(height: 20),
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.center,
-//               children: [
-//                 Radio<String>(
-//                   value: 'Male',
-//                   groupValue: _gender,
-//                   onChanged: (value) {
-//                     setState(() {
-//                       _gender = value;
-//                       _calculateZScore(double.tryParse(_bmi) ?? 0);
-//                     });
-//                   },
-//                 ),
-//                 Text('Male'),
-//                 Radio<String>(
-//                   value: 'Female',
-//                   groupValue: _gender,
-//                   onChanged: (value) {
-//                     setState(() {
-//                       _gender = value;
-//                       _calculateZScore(double.tryParse(_bmi) ?? 0);
-//                     });
-//                   },
-//                 ),
-//                 Text('Female'),
-//               ],
-//             ),
-//             SizedBox(height: 20),
-//             if (_age.isNotEmpty)
-//               Text(
-//                 'Your Age is: $_age',
-//                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-//               ),
-//             if (_bmi.isNotEmpty)
-//               Text(
-//                 'Your BMI is: $_bmi',
-//                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-//               ),
-//             if (_zScore != null)
-//               Text(
-//                 'الوزن: ${findZScoreForAge(double.tryParse(_bmi)!,_age,_gender!)}',
-//                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-//               ),  if (_zScore != null)
-//               Text(
-//                 'الطول: ${findHeightZScoreForAge(double.tryParse(_heightController.text)!,_age,_gender!)}',
-//                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-//               ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -259,6 +6,10 @@ import 'package:intl/intl.dart';
 import 'package:bmi/z_score_data.dart';
 import 'package:bmi/find_z_score.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:date_format_field/date_format_field.dart';
+import 'package:flutter/gestures.dart';
+import 'package:url_launcher/url_launcher.dart';
+
 
 void main() {
   runApp(AgeCalculatorApp());
@@ -519,6 +270,16 @@ class _AgeCalculatorScreenState extends State<AgeCalculatorScreen> {
   void _calculateAgeAndBMI() {
     if (_selectedDate != null) {
       final currentDate = DateTime.now();
+
+      // Check if the selected date is in the future
+      if (_selectedDate!.isAfter(currentDate)) {
+        // Optionally, show a message to the user that the selected date is invalid
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('تاريخ الميلاد لا يمكن أن يكون في المستقبل')),
+        );
+        return; // Exit the function, do not calculate age
+      }
+
       int years = currentDate.year - _selectedDate!.year;
       int months = currentDate.month - _selectedDate!.month;
       int days = currentDate.day - _selectedDate!.day;
@@ -532,6 +293,7 @@ class _AgeCalculatorScreenState extends State<AgeCalculatorScreen> {
         months += 12;
       }
 
+      // Age calculation logic
       if (years > 0) {
         double decimalMonths = months / 12.0;
         setState(() {
@@ -551,7 +313,10 @@ class _AgeCalculatorScreenState extends State<AgeCalculatorScreen> {
           _age = '${days}d';
         });
       }
-    }
+
+
+
+  }
 
     double weight = double.tryParse(_weightController.text.isEmpty ? '0' : _weightController.text) ?? 0;
     double height = double.tryParse(_heightController.text.isEmpty ? '0' : _heightController.text) ?? 0;
@@ -588,65 +353,63 @@ class _AgeCalculatorScreenState extends State<AgeCalculatorScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('Age and BMI Calculator'),
+        title: Text('بيانات التغذية'),
+
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextFormField(
-              controller: _dobController,
-              decoration: InputDecoration(
-                labelText: 'تاريخ الميلاد', // Date of Birth in Arabic
-                hintText: 'اختر تاريخ الميلاد', // Choose Date of Birth in Arabic
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.calendar_today), // Calendar icon
-                  onPressed: () async {
-                    FocusScope.of(context).unfocus(); // Prevents keyboard from showing
-                    await _selectDate(context); // Opens the date picker
-                  },
-                ),
-              ),
-              keyboardType: TextInputType.none, // Disable keyboard input
-              // inputFormatters: [
-              //   FilteringTextInputFormatter.allow(RegExp(r'^\d{0,4}(-\d{0,2}){0,2}$')), // Allow only yyyy-MM-dd format
-              // ],
 
-              onChanged: (value) {
+    body: Padding(
+    padding: const EdgeInsets.all(16.0), // Add padding to the whole app
+    child: Column(
 
-
-                // Regular expression to validate yyyy-MM-dd format
-                final regex = RegExp(r'^\d{4}-\d{2}-\d{2}$');
-                if (regex.hasMatch(value)) {
-                  try {
-                    final parsedDate = DateFormat('yyyy-MM-dd').parse(value);
-                    setState(() {
-                      _selectedDate = parsedDate; // Sets the parsed date as the selected date
-                      _calculateAgeAndBMI(); // Calculates age and BMI based on the selected date
-                    });
-                  } catch (e) {
-                    // Handle invalid date format if needed
-                  }
-                } else {
-                  // Optionally handle invalid format
-                  // _dobController.clear(); // Uncomment to clear the input if invalid
-                }
-              },
-            ),
-
+    children: [
 
             SizedBox(height: 20),
             // Text(formatSingleInputToDate(value)),
+            DateFormatField(
+              type: DateFormatType.type4,
+              lastDate: DateTime.now(), // Disable future dates by setting the lastDay to today
+              decoration: const InputDecoration(
+                labelStyle: TextStyle(
+
+                  fontSize: 18,
+fontFamily: 'Cairo',
+                ),
+                border: InputBorder.none,
+                label: Text("تاريخ الميلاد"),
+              ),
+              onComplete: (date) {
+                if (date != null) { // Check if a valid date is selected
+                  setState(() {
+                    _dobController.text = DateFormat('yyyy-MM-dd').format(date);
+                    _selectedDate = date; // Store the selected date
+                    _calculateAgeAndBMI(); // Calculate age and BMI
+                  });
+                } else {
+                  // Optionally, handle the case where no date is selected
+                  // You could show a Snackbar or a dialog for user feedback.
+                }
+              },
+            ),
+            SizedBox(height: 20),
             TextFormField(
               controller: _weightController,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}'))],
               decoration: InputDecoration(
+
                 labelText: 'الوزن (كغ)',
+                labelStyle: TextStyle(
+                  fontSize: 18,
+                  fontFamily: 'Cairo',
+                ),
                 hintText: 'ادخل الوزن بالكيلوغرام',
+                hintStyle: TextStyle(
+                  fontSize: 18,
+                  fontFamily: 'Cairo',
+                ),
               ),
               onChanged: (value) => _calculateAgeAndBMI(),
             ),
@@ -657,11 +420,20 @@ class _AgeCalculatorScreenState extends State<AgeCalculatorScreen> {
               inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}'))],
               decoration: InputDecoration(
                 labelText: 'الطول (سم)',
+                labelStyle: TextStyle(
+                  fontSize: 18,
+                  fontFamily: 'Cairo',
+                ),
                 hintText: 'ادخل الطول بالسنتيمتر',
+                hintStyle: TextStyle(
+                  fontSize: 18,
+                  fontFamily: 'Cairo',
+                ),
               ),
               onChanged: (value) => _calculateAgeAndBMI(),
             ),
             SizedBox(height: 20),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -678,6 +450,7 @@ class _AgeCalculatorScreenState extends State<AgeCalculatorScreen> {
                   },
                 ),
                 Text('ذكر'),
+
                 Radio<String>(
                   value: 'Female',
                   groupValue: _gender,
@@ -697,30 +470,73 @@ class _AgeCalculatorScreenState extends State<AgeCalculatorScreen> {
             if (_age.isNotEmpty)
               Text(
                 'العمر: ${formatAgeInArabic(_age)}',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
               ),
             if (_bmi.isNotEmpty)
               Text(
                 'مؤشر الكتلة: $_bmi',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
               ),
             if (_zScore != null)
               Text(
                 'الكتلة / العمر: ${findZScoreForAge(double.tryParse(_bmi)!, _age, _gender!)}',
-                style: TextStyle(fontSize: 20, color: Colors.red ,fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, color: Colors.red ,fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
               ),
             if (_zScore != null && _heightController.text.isNotEmpty)
               Text(
                 '${isAgeFiveYearsOrMore(_age!)? "القامة" : "الطول"} / العمر: ${findHeightZScoreForAge(double.tryParse(_heightController.text)!, _age, _gender!)}',
-                style: TextStyle(fontSize: 20, color: Colors.amber, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, color: Colors.amber, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
               ),if (_zScore != null && _weightController.text.isNotEmpty)
               Text(
                 'الوزن / العمر: ${findWeightZScoreForAge(double.tryParse(_weightController.text)!, _age, _gender!)}',
-                style: TextStyle(fontSize: 20, color: Colors.blue, fontWeight: FontWeight.bold),
+                style: TextStyle(fontSize: 20, color: Colors.blue, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
               ),
-          ],
+      // SizedBox(height: 40),
+      Expanded(child: Container()),
+      Align(
+        alignment: Alignment.bottomCenter, // Align to the bottom center
+        child: Padding(
+          padding: const EdgeInsets.all(16.0), // Optional padding for spacing
+          child: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              text: 'تم اعداد البرنامج بواسطة المبرمج ',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.white, // Text color
+                fontFamily: 'Cairo', // Use Cairo font
+              ),
+              children: [
+                TextSpan(
+                  text: 'عبدالرحمن ماهر',
+                  style: TextStyle(
+                    color: Colors.blue, // Link color
+                    decoration: TextDecoration.underline, // Underline to indicate it's a link
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () async {
+                      const telegramUrl = 'https://t.me/ibn_maher_96'; // Replace with your Telegram URL
+                      if (await canLaunch(telegramUrl)) {
+                        await launch(telegramUrl);
+                      } else {
+                        throw 'Could not launch $telegramUrl';
+                      }
+                    },
+                ),
+                TextSpan(
+                  text: ' استناداً الى بينات منظمة الصحة العالمية',
+                ),
+              ],
+            ),
+          ),
         ),
-      ),
+      )
+          ],
+
+        ),
+    )
     );
+
   }
 }
