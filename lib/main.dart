@@ -474,7 +474,8 @@ fontFamily: 'Cairo',
               ),
             if (_bmi.isNotEmpty)
               Text(
-                'مؤشر الكتلة: $_bmi',
+                ' مؤشر الكتلة: ${NumberFormat("#.##", "en_US").format(double.tryParse(_bmi))}',
+                // ' مؤشر الكتلة: ${double.tryParse(_bmi)}',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
               ),
             if (_zScore != null)
