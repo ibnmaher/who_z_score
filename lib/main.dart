@@ -396,7 +396,7 @@ fontFamily: 'Cairo',
             SizedBox(height: 20),
             TextFormField(
               controller: _weightController,
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
               inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}'))],
               decoration: InputDecoration(
 
@@ -416,7 +416,7 @@ fontFamily: 'Cairo',
             SizedBox(height: 20),
             TextFormField(
               controller: _heightController,
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
               inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}'))],
               decoration: InputDecoration(
                 labelText: 'الطول (سم)',
@@ -472,25 +472,31 @@ fontFamily: 'Cairo',
                 'العمر: ${formatAgeInArabic(_age)}',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
               ),
+      SizedBox(height: 10),
             if (_bmi.isNotEmpty)
               Text(
                 ' مؤشر الكتلة: ${NumberFormat("#.##", "en_US").format(double.tryParse(_bmi))}',
                 // ' مؤشر الكتلة: ${double.tryParse(_bmi)}',
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
               ),
+      SizedBox(height: 10),
             if (_zScore != null)
               Text(
                 'الكتلة / العمر: ${findZScoreForAge(double.tryParse(_bmi)!, _age, _gender!)}',
                 style: TextStyle(fontSize: 20, color: Colors.red ,fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
               ),
+      SizedBox(height: 10),
             if (_zScore != null && _heightController.text.isNotEmpty)
               Text(
-                '${isAgeFiveYearsOrMore(_age!)? "القامة" : "الطول"} / العمر: ${findHeightZScoreForAge(double.tryParse(_heightController.text)!, _age, _gender!)}',
+                '${isAgeMoreThan(_age!  ,2)? "القامة" : "الطول"} / العمر: ${findHeightZScoreForAge(double.tryParse(_heightController.text)!, _age, _gender!)}',
                 style: TextStyle(fontSize: 20, color: Colors.amber, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
-              ),if (_zScore != null && _weightController.text.isNotEmpty)
+              ),
+      SizedBox(height: 10)
+      ,if (_zScore != null && _weightController.text.isNotEmpty)
+
               Text(
                 'الوزن / العمر: ${findWeightZScoreForAge(double.tryParse(_weightController.text)!, _age, _gender!)}',
-                style: TextStyle(fontSize: 20, color: Colors.blue, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
+                style: TextStyle(fontSize: 20, color: Colors.greenAccent, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
               ),
       // SizedBox(height: 40),
       Expanded(child: Container()),
