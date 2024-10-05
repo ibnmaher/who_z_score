@@ -67,12 +67,12 @@ String categorizeBMI(double bmi) {
 
 String categorizeByZScore(String zScoreStr) {
   double zScore = double.parse(zScoreStr); // Convert the string to a double
-
+print(zScoreStr);
   if (zScore <= -3) return "هزال شديد";
   if (zScore > -3 && zScore <= -2) return "هزال";
   if (zScore > -2 && zScore <= 1) return "طبيعي";
   if (zScore > 1 && zScore <= 2) return "احتمالية زيادة وزن";
-  if (zScore > 2 && zScore <3) return "زيادة في الوزن";
+  if (zScore > 2 &&  zScore < 3) return "زيادة في الوزن";
   if ( zScore >= 3) return "سمنة";
 
   return "Uncategorized"; // fallback if needed
@@ -113,50 +113,101 @@ String categorizeByWeightZScore(String zScoreStr) {
   return "Uncategorized"; // fallback if needed
 }
 
+// String findZScoreForAge(double value, String age, String gender) {
+//   if(isAgeNineteenYearsOrMore(age)){
+//     return categorizeBMI(value);
+//   }
+//   if (gender == 'Male') {
+//     if (!zScoreDataForBoys.containsKey(age)) {
+//       return "لا توجد بيانات لهذا العمر";
+//     }
+//
+//     Map<String, double> zScoreMapping = zScoreDataForBoys[age]!;
+//     String closestZScore = "";
+//     double closestDifference = double.infinity;
+//
+//     zScoreMapping.forEach((z, mappedValue) {
+//       double diff = (mappedValue - value).abs();
+//       if (diff < closestDifference) {
+//         closestDifference = diff;
+//         closestZScore = z;
+//       }
+//     });
+//
+//     return isAgeFiveYearsOrMore(age)
+//         ? categorizeByZScoreOverFive(closestZScore)
+//         : categorizeByZScore(closestZScore);
+//   } else {
+//     if (!zScoreDataForGirls.containsKey(age)) {
+//       return "لا توجد بيانات لهذا العمر";
+//     }
+//     Map<String, double> zScoreMapping = zScoreDataForGirls[age]!;
+//     String closestZScore = "";
+//     double closestDifference = double.infinity;
+//
+//     zScoreMapping.forEach((z, mappedValue) {
+//       double diff = (mappedValue - value).abs();
+//       if (diff < closestDifference) {
+//         closestDifference = diff;
+//         closestZScore = z;
+//       }
+//     });
+//
+//     return isAgeFiveYearsOrMore(age)
+//         ? categorizeByZScoreOverFive(closestZScore)
+//         : categorizeByZScore(closestZScore);
+//   }
+// }
+
 String findZScoreForAge(double value, String age, String gender) {
-  if(isAgeNineteenYearsOrMore(age)){
+  if (isAgeNineteenYearsOrMore(age)) {
     return categorizeBMI(value);
   }
-  if (gender == 'Male') {
-    if (!zScoreDataForBoys.containsKey(age)) {
-      return "لا توجد بيانات لهذا العمر";
-    }
 
-    Map<String, double> zScoreMapping = zScoreDataForBoys[age]!;
-    String closestZScore = "";
-    double closestDifference = double.infinity;
+  Map<String, Map<String, double>> zScoreData = gender == 'Male' ? zScoreDataForBoys : zScoreDataForGirls;
 
-    zScoreMapping.forEach((z, mappedValue) {
-      double diff = (mappedValue - value).abs();
-      if (diff < closestDifference) {
-        closestDifference = diff;
-        closestZScore = z;
-      }
-    });
-
-    return isAgeFiveYearsOrMore(age)
-        ? categorizeByZScoreOverFive(closestZScore)
-        : categorizeByZScore(closestZScore);
-  } else {
-    if (!zScoreDataForGirls.containsKey(age)) {
-      return "لا توجد بيانات لهذا العمر";
-    }
-    Map<String, double> zScoreMapping = zScoreDataForGirls[age]!;
-    String closestZScore = "";
-    double closestDifference = double.infinity;
-
-    zScoreMapping.forEach((z, mappedValue) {
-      double diff = (mappedValue - value).abs();
-      if (diff < closestDifference) {
-        closestDifference = diff;
-        closestZScore = z;
-      }
-    });
-
-    return isAgeFiveYearsOrMore(age)
-        ? categorizeByZScoreOverFive(closestZScore)
-        : categorizeByZScore(closestZScore);
+  if (!zScoreData.containsKey(age)) {
+    return "لا توجد بيانات لهذا العمر";
   }
+
+  Map<String, double> zScoreMapping = zScoreData[age]!;
+  List<double> zScores = zScoreMapping.keys.map((z) => double.parse(z)).toList();
+  zScores.sort();
+
+  // Find the two closest z-scores
+  double lowerZ = double.negativeInfinity;
+  double upperZ = double.infinity;
+
+  for (double z in zScores) {
+    if (zScoreMapping[z.toString()]! <= value) {
+      lowerZ = z;
+    } else if (zScoreMapping[z.toString()]! > value) {
+      upperZ = z;
+      break;
+    }
+  }
+
+  // Edge case: if the value is exactly at or below the lowest or highest in the data
+  if (lowerZ == double.negativeInfinity || upperZ == double.infinity) {
+    return lowerZ == double.negativeInfinity
+        ? categorizeByZScore(zScores.first.toString())
+        : categorizeByZScore(zScores.last.toString());
+  }
+
+  // Linear interpolation to calculate the exact z-score
+  double lowerValue = zScoreMapping[lowerZ.toString()]!;
+  double upperValue = zScoreMapping[upperZ.toString()]!;
+
+  // Calculate the interpolated z-score
+  double interpolatedZ = lowerZ +
+      ((value - lowerValue) * (upperZ - lowerZ)) / (upperValue - lowerValue);
+
+  // Convert the interpolated z-score to a string for categorization
+  String zScoreStr = interpolatedZ.toStringAsFixed(2);
+
+  return isAgeFiveYearsOrMore(age)
+      ? categorizeByZScoreOverFive(zScoreStr)
+      : categorizeByZScore(zScoreStr);
 }
 
 String findHeightZScoreForAge(double value, String age, String gender) {

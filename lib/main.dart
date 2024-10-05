@@ -396,7 +396,7 @@ fontFamily: 'Cairo',
             SizedBox(height: 20),
             TextFormField(
               controller: _weightController,
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
               inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}'))],
               decoration: InputDecoration(
 
@@ -416,7 +416,7 @@ fontFamily: 'Cairo',
             SizedBox(height: 20),
             TextFormField(
               controller: _heightController,
-              keyboardType: TextInputType.number,
+              keyboardType: TextInputType.numberWithOptions(decimal: true),
               inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}'))],
               decoration: InputDecoration(
                 labelText: 'الطول (سم)',
