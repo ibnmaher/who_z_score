@@ -74,9 +74,8 @@ String categorizeByHeightZScore(String zScoreStr) {
 
   if (zScore <= -3) return "تقزم شديد";
   if (zScore > -3 && zScore <= -2) return "تقزم";
-  if (zScore > -2 && zScore <= 1) return "طبيعي";
-  if (zScore > 1 && zScore <= 2) return "فوق المتوسط";
-  if (zScore > 2) return "زيادة في الطول";
+  if (zScore > -2 && zScore <= 3) return "طبيعي";
+  if (zScore > 3) return "زيادة في الطول";
 
   return "Uncategorized"; // fallback if needed
 }
@@ -97,7 +96,7 @@ String categorizeByWeightZScore(String zScoreStr) {
 
 
 String findZScoreForAge(double value, String age, String gender) {
-  if (isAgeMoreThan(age, 19)) {
+  if (isAgeMoreThan(age,19)) {
     return categorizeBMI(value);
   }
 
@@ -107,8 +106,13 @@ String findZScoreForAge(double value, String age, String gender) {
     return "لا توجد بيانات لهذا العمر";
   }
 
-  Map<String, double> zScoreMapping = zScoreData[age]!;
-  List<double> zScores = zScoreMapping.keys.map((z) => double.parse(z)).toList();
+  Map<String, double>? zScoreMapping = zScoreData[age];
+
+  if (zScoreMapping == null || zScoreMapping.isEmpty) {
+    return "لا توجد بيانات لهذا العمر";  // Handle case where there's no data for the age
+  }
+
+  List<double> zScores = zScoreMapping.keys.map((z) => double.tryParse(z) ?? 0).toList();
   zScores.sort();
 
   // Find the two closest z-scores
@@ -116,9 +120,12 @@ String findZScoreForAge(double value, String age, String gender) {
   double upperZ = double.infinity;
 
   for (double z in zScores) {
-    if (zScoreMapping[z.toString()]! <= value) {
+    double? mappedValue = zScoreMapping[z.toString()];  // Safely access the map
+    if (mappedValue == null) continue;  // Skip null values
+
+    if (mappedValue <= value) {
       lowerZ = z;
-    } else if (zScoreMapping[z.toString()]! > value) {
+    } else if (mappedValue > value) {
       upperZ = z;
       break;
     }
@@ -132,8 +139,12 @@ String findZScoreForAge(double value, String age, String gender) {
   }
 
   // Linear interpolation to calculate the exact z-score
-  double lowerValue = zScoreMapping[lowerZ.toString()]!;
-  double upperValue = zScoreMapping[upperZ.toString()]!;
+  double? lowerValue = zScoreMapping[lowerZ.toString()];
+  double? upperValue = zScoreMapping[upperZ.toString()];
+
+  if (lowerValue == null || upperValue == null) {
+    return "Error: Data missing for z-score interpolation";  // Handle missing data for interpolation
+  }
 
   // Calculate the interpolated z-score
   double interpolatedZ = lowerZ +
