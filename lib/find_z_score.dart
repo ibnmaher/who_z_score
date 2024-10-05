@@ -1,6 +1,6 @@
 import 'z_score_data.dart';
 
-bool isAgeFiveYearsOrMore(String age) {
+bool isAgeMoreThan(String age, int target) {
   // Regular expression to split the number (which can be decimal) and the unit
   final regExp = RegExp(r'^(\d+(\.\d+)?)([a-zA-Z])$');
   final match = regExp.firstMatch(age);
@@ -20,29 +20,10 @@ bool isAgeFiveYearsOrMore(String age) {
   }
 
   // Return true if the number is 5 or more years
-  return number >= 5;
-}bool isAgeNineteenYearsOrMore(String age) {
-  // Regular expression to split the number (which can be decimal) and the unit
-  final regExp = RegExp(r'^(\d+(\.\d+)?)([a-zA-Z])$');
-  final match = regExp.firstMatch(age);
-
-  // Check if a match is found, return false if not
-  if (match == null) {
-    return false; // No match means the format is incorrect
-  }
-
-  // Extract and parse the number, ensure it's a valid double
-  double? number = double.tryParse(match.group(1) ?? '');
-  String unit = match.group(3) ?? '';
-
-  // If number parsing fails or unit is not 'y', return false
-  if (number == null || unit != 'y') {
-    return false;
-  }
-
-  // Return true if the number is 5 or more years
-  return number > 19;
+  return number >= target;
 }
+
+
 String categorizeBMI(double bmi) {
   if (bmi < 16) {
     return "(نقص وزن حاد)";  // Severe underweight
@@ -67,7 +48,7 @@ String categorizeBMI(double bmi) {
 
 String categorizeByZScore(String zScoreStr) {
   double zScore = double.parse(zScoreStr); // Convert the string to a double
-print(zScoreStr);
+
   if (zScore <= -3) return "هزال شديد";
   if (zScore > -3 && zScore <= -2) return "هزال";
   if (zScore > -2 && zScore <= 1) return "طبيعي";
@@ -113,54 +94,10 @@ String categorizeByWeightZScore(String zScoreStr) {
   return "Uncategorized"; // fallback if needed
 }
 
-// String findZScoreForAge(double value, String age, String gender) {
-//   if(isAgeNineteenYearsOrMore(age)){
-//     return categorizeBMI(value);
-//   }
-//   if (gender == 'Male') {
-//     if (!zScoreDataForBoys.containsKey(age)) {
-//       return "لا توجد بيانات لهذا العمر";
-//     }
-//
-//     Map<String, double> zScoreMapping = zScoreDataForBoys[age]!;
-//     String closestZScore = "";
-//     double closestDifference = double.infinity;
-//
-//     zScoreMapping.forEach((z, mappedValue) {
-//       double diff = (mappedValue - value).abs();
-//       if (diff < closestDifference) {
-//         closestDifference = diff;
-//         closestZScore = z;
-//       }
-//     });
-//
-//     return isAgeFiveYearsOrMore(age)
-//         ? categorizeByZScoreOverFive(closestZScore)
-//         : categorizeByZScore(closestZScore);
-//   } else {
-//     if (!zScoreDataForGirls.containsKey(age)) {
-//       return "لا توجد بيانات لهذا العمر";
-//     }
-//     Map<String, double> zScoreMapping = zScoreDataForGirls[age]!;
-//     String closestZScore = "";
-//     double closestDifference = double.infinity;
-//
-//     zScoreMapping.forEach((z, mappedValue) {
-//       double diff = (mappedValue - value).abs();
-//       if (diff < closestDifference) {
-//         closestDifference = diff;
-//         closestZScore = z;
-//       }
-//     });
-//
-//     return isAgeFiveYearsOrMore(age)
-//         ? categorizeByZScoreOverFive(closestZScore)
-//         : categorizeByZScore(closestZScore);
-//   }
-// }
+
 
 String findZScoreForAge(double value, String age, String gender) {
-  if (isAgeNineteenYearsOrMore(age)) {
+  if (isAgeMoreThan(age, 19)) {
     return categorizeBMI(value);
   }
 
@@ -205,7 +142,7 @@ String findZScoreForAge(double value, String age, String gender) {
   // Convert the interpolated z-score to a string for categorization
   String zScoreStr = interpolatedZ.toStringAsFixed(2);
 
-  return isAgeFiveYearsOrMore(age)
+  return isAgeMoreThan(age,5)
       ? categorizeByZScoreOverFive(zScoreStr)
       : categorizeByZScore(zScoreStr);
 }
