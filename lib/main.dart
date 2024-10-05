@@ -316,7 +316,7 @@ class _AgeCalculatorScreenState extends State<AgeCalculatorScreen> {
 
 
 
-  }
+    }
 
     double weight = double.tryParse(_weightController.text.isEmpty ? '0' : _weightController.text) ?? 0;
     double height = double.tryParse(_heightController.text.isEmpty ? '0' : _heightController.text) ?? 0;
@@ -355,193 +355,194 @@ class _AgeCalculatorScreenState extends State<AgeCalculatorScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text('بيانات التغذية'),
+        appBar: AppBar(
+          title: Text('بيانات التغذية'),
 
-      ),
+        ),
 
-    body: Padding(
-    padding: const EdgeInsets.all(16.0), // Add padding to the whole app
-    child: Column(
+        body: Padding(
+          padding: const EdgeInsets.all(16.0), // Add padding to the whole app
+          child: Column(
 
-    children: [
+            children: [
 
-            SizedBox(height: 20),
-            // Text(formatSingleInputToDate(value)),
-            DateFormatField(
-              type: DateFormatType.type4,
-              lastDate: DateTime.now(), // Disable future dates by setting the lastDay to today
-              decoration: const InputDecoration(
-                labelStyle: TextStyle(
+              SizedBox(height: 20),
+              // Text(formatSingleInputToDate(value)),
+              DateFormatField(
+                type: DateFormatType.type4,
+                lastDate: DateTime.now(), // Disable future dates by setting the lastDay to today
+                decoration: const InputDecoration(
+                  labelStyle: TextStyle(
 
-                  fontSize: 18,
-fontFamily: 'Cairo',
-                ),
-                border: InputBorder.none,
-                label: Text("تاريخ الميلاد"),
-              ),
-              onComplete: (date) {
-                if (date != null) { // Check if a valid date is selected
-                  setState(() {
-                    _dobController.text = DateFormat('yyyy-MM-dd').format(date);
-                    _selectedDate = date; // Store the selected date
-                    _calculateAgeAndBMI(); // Calculate age and BMI
-                  });
-                } else {
-                  // Optionally, handle the case where no date is selected
-                  // You could show a Snackbar or a dialog for user feedback.
-                }
-              },
-            ),
-            SizedBox(height: 20),
-            TextFormField(
-              controller: _weightController,
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}'))],
-              decoration: InputDecoration(
-
-                labelText: 'الوزن (كغ)',
-                labelStyle: TextStyle(
-                  fontSize: 18,
-                  fontFamily: 'Cairo',
-                ),
-                hintText: 'ادخل الوزن بالكيلوغرام',
-                hintStyle: TextStyle(
-                  fontSize: 18,
-                  fontFamily: 'Cairo',
-                ),
-              ),
-              onChanged: (value) => _calculateAgeAndBMI(),
-            ),
-            SizedBox(height: 20),
-            TextFormField(
-              controller: _heightController,
-              keyboardType: TextInputType.numberWithOptions(decimal: true),
-              inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}'))],
-              decoration: InputDecoration(
-                labelText: 'الطول (سم)',
-                labelStyle: TextStyle(
-                  fontSize: 18,
-                  fontFamily: 'Cairo',
-                ),
-                hintText: 'ادخل الطول بالسنتيمتر',
-                hintStyle: TextStyle(
-                  fontSize: 18,
-                  fontFamily: 'Cairo',
-                ),
-              ),
-              onChanged: (value) => _calculateAgeAndBMI(),
-            ),
-            SizedBox(height: 20),
-
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Radio<String>(
-                  value: 'Male',
-                  groupValue: _gender,
-                  onChanged: (value) {
-                    setState(() {
-                      _gender = value;
-                      if (_bmi.isNotEmpty) {
-                        _calculateZScore(double.tryParse(_bmi)!);
-                      }
-                    });
-                  },
-                ),
-                Text('ذكر'),
-
-                Radio<String>(
-                  value: 'Female',
-                  groupValue: _gender,
-                  onChanged: (value) {
-                    setState(() {
-                      _gender = value;
-                      if (_bmi.isNotEmpty) {
-                        _calculateZScore(double.tryParse(_bmi)!);
-                      }
-                    });
-                  },
-                ),
-                Text('انثى'),
-              ],
-            ),
-            SizedBox(height: 20),
-            if (_age.isNotEmpty)
-              Text(
-                'العمر: ${formatAgeInArabic(_age)}',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
-              ),
-      SizedBox(height: 10),
-            if (_bmi.isNotEmpty)
-              Text(
-                'مؤشر الكتلة: $_bmi',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
-              ),
-      SizedBox(height: 10),
-            if (_zScore != null)
-              Text(
-                'الكتلة / العمر: ${findZScoreForAge(double.tryParse(_bmi)!, _age, _gender!)}',
-                style: TextStyle(fontSize: 20, color: Colors.red ,fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
-              ),
-      SizedBox(height: 10),
-            if (_zScore != null && _heightController.text.isNotEmpty)
-              Text(
-                '${isAgeMoreThan(_age!  ,2)? "القامة" : "الطول"} / العمر: ${findHeightZScoreForAge(double.tryParse(_heightController.text)!, _age, _gender!)}',
-                style: TextStyle(fontSize: 20, color: Colors.amber, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
-              ),
-      SizedBox(height: 10)
-      ,if (_zScore != null && _weightController.text.isNotEmpty)
-
-              Text(
-                'الوزن / العمر: ${findWeightZScoreForAge(double.tryParse(_weightController.text)!, _age, _gender!)}',
-                style: TextStyle(fontSize: 20, color: Colors.greenAccent, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
-              ),
-      // SizedBox(height: 40),
-      Expanded(child: Container()),
-      Align(
-        alignment: Alignment.bottomCenter, // Align to the bottom center
-        child: Padding(
-          padding: const EdgeInsets.all(16.0), // Optional padding for spacing
-          child: RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              text: 'تم اعداد البرنامج بواسطة المبرمج ',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.white, // Text color
-                fontFamily: 'Cairo', // Use Cairo font
-              ),
-              children: [
-                TextSpan(
-                  text: 'عبدالرحمن ماهر',
-                  style: TextStyle(
-                    color: Colors.blue, // Link color
-                    decoration: TextDecoration.underline, // Underline to indicate it's a link
+                    fontSize: 18,
+                    fontFamily: 'Cairo',
                   ),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () async {
-                      const telegramUrl = 'https://t.me/ibn_maher_96'; // Replace with your Telegram URL
-                      if (await canLaunch(telegramUrl)) {
-                        await launch(telegramUrl);
-                      } else {
-                        throw 'Could not launch $telegramUrl';
-                      }
-                    },
+                  border: InputBorder.none,
+                  label: Text("تاريخ الميلاد"),
                 ),
-                TextSpan(
-                  text: ' استناداً الى بينات منظمة الصحة العالمية',
-                ),
-              ],
-            ),
-          ),
-        ),
-      )
-          ],
+                onComplete: (date) {
+                  if (date != null) { // Check if a valid date is selected
+                    setState(() {
+                      _dobController.text = DateFormat('yyyy-MM-dd').format(date);
+                      _selectedDate = date; // Store the selected date
+                      _calculateAgeAndBMI(); // Calculate age and BMI
+                    });
+                  } else {
+                    // Optionally, handle the case where no date is selected
+                    // You could show a Snackbar or a dialog for user feedback.
+                  }
+                },
+              ),
+              SizedBox(height: 20),
+              TextFormField(
+                controller: _weightController,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}'))],
+                decoration: InputDecoration(
 
-        ),
-    )
+                  labelText: 'الوزن (كغ)',
+                  labelStyle: TextStyle(
+                    fontSize: 18,
+                    fontFamily: 'Cairo',
+                  ),
+                  hintText: 'ادخل الوزن بالكيلوغرام',
+                  hintStyle: TextStyle(
+                    fontSize: 18,
+                    fontFamily: 'Cairo',
+                  ),
+                ),
+                onChanged: (value) => _calculateAgeAndBMI(),
+              ),
+              SizedBox(height: 20),
+              TextFormField(
+                controller: _heightController,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}'))],
+                decoration: InputDecoration(
+                  labelText: 'الطول (سم)',
+                  labelStyle: TextStyle(
+                    fontSize: 18,
+                    fontFamily: 'Cairo',
+                  ),
+                  hintText: 'ادخل الطول بالسنتيمتر',
+                  hintStyle: TextStyle(
+                    fontSize: 18,
+                    fontFamily: 'Cairo',
+                  ),
+                ),
+                onChanged: (value) => _calculateAgeAndBMI(),
+              ),
+              SizedBox(height: 20),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Radio<String>(
+                    value: 'Male',
+                    groupValue: _gender,
+                    onChanged: (value) {
+                      setState(() {
+                        _gender = value;
+                        if (_bmi.isNotEmpty) {
+                          _calculateZScore(double.tryParse(_bmi)!);
+                        }
+                      });
+                    },
+                  ),
+                  Text('ذكر'),
+
+                  Radio<String>(
+                    value: 'Female',
+                    groupValue: _gender,
+                    onChanged: (value) {
+                      setState(() {
+                        _gender = value;
+                        if (_bmi.isNotEmpty) {
+                          _calculateZScore(double.tryParse(_bmi)!);
+                        }
+                      });
+                    },
+                  ),
+                  Text('انثى'),
+                ],
+              ),
+              SizedBox(height: 20),
+              if (_age.isNotEmpty)
+                Text(
+                  'العمر: ${formatAgeInArabic(_age)}',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
+                ),
+              SizedBox(height: 10),
+              if (_bmi.isNotEmpty)
+                Text(
+                  ' مؤشر الكتلة: ${NumberFormat("#.##", "en_US").format(double.tryParse(_bmi))}',
+                  // ' مؤشر الكتلة: ${double.tryParse(_bmi)}',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
+                ),
+              SizedBox(height: 10),
+              if (_zScore != null)
+                Text(
+                  'الكتلة / العمر: ${findZScoreForAge(double.tryParse(_bmi)!, _age, _gender!)}',
+                  style: TextStyle(fontSize: 20, color: Colors.red ,fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
+                ),
+              SizedBox(height: 10),
+              if (_zScore != null && _heightController.text.isNotEmpty)
+                Text(
+                  '${isAgeMoreThan(_age!  ,2)? "القامة" : "الطول"} / العمر: ${findHeightZScoreForAge(double.tryParse(_heightController.text)!, _age, _gender!)}',
+                  style: TextStyle(fontSize: 20, color: Colors.amber, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
+                ),
+              SizedBox(height: 10)
+              ,if (_zScore != null && _weightController.text.isNotEmpty)
+
+                Text(
+                  'الوزن / العمر: ${findWeightZScoreForAge(double.tryParse(_weightController.text)!, _age, _gender!)}',
+                  style: TextStyle(fontSize: 20, color: Colors.greenAccent, fontWeight: FontWeight.bold, fontFamily: 'Cairo'),
+                ),
+              // SizedBox(height: 40),
+              Expanded(child: Container()),
+              Align(
+                alignment: Alignment.bottomCenter, // Align to the bottom center
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0), // Optional padding for spacing
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      text: 'تم اعداد البرنامج بواسطة المبرمج ',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white, // Text color
+                        fontFamily: 'Cairo', // Use Cairo font
+                      ),
+                      children: [
+                        TextSpan(
+                          text: 'عبدالرحمن ماهر',
+                          style: TextStyle(
+                            color: Colors.blue, // Link color
+                            decoration: TextDecoration.underline, // Underline to indicate it's a link
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () async {
+                              const telegramUrl = 'https://t.me/ibn_maher_96'; // Replace with your Telegram URL
+                              if (await canLaunch(telegramUrl)) {
+                                await launch(telegramUrl);
+                              } else {
+                                throw 'Could not launch $telegramUrl';
+                              }
+                            },
+                        ),
+                        TextSpan(
+                          text: ' استناداً الى بينات منظمة الصحة العالمية',
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            ],
+
+          ),
+        )
     );
 
   }
