@@ -36856,22 +36856,22 @@ o=A.a([i,new A.ve(B.Kl,B.II,new A.af9(n),new A.bL(h,0,!1),m),g,d,c,e,r,A.o3(A.a(
 i=n.w
 if(i.length!==0)o.push(A.cL("\u0627\u0644\u0639\u0645\u0631: "+A.aLS(i),m,m,m,A.cU(m,m,m,m,m,m,m,m,k,m,m,20,m,m,B.bt,m,m,!0,m,m,m,m,m,m,m,m),m,m))
 o.push(A.co(m,10,m))
-if(n.x.length!==0)o.push(A.cL(" \u0645\u0624\u0634\u0631 \u0627\u0644\u0643\u062a\u0644\u0629: "+A.a8B("#.##","en_US").ip(A.fY(n.x)),m,m,m,A.cU(m,m,m,m,m,m,m,m,k,m,m,20,m,m,B.bt,m,m,!0,m,m,m,m,m,m,m,m),m,m))
+if(n.x.length!==0&&f.a.a.length!==0&&s.a.a.length!==0)o.push(A.cL(" \u0645\u0624\u0634\u0631 \u0627\u0644\u0643\u062a\u0644\u0629: "+A.a8B("#.##","en_US").ip(A.fY(n.x)),m,m,m,A.cU(m,m,m,m,m,m,m,m,k,m,m,20,m,m,B.bt,m,m,!0,m,m,m,m,m,m,m,m),m,m))
 o.push(A.co(m,10,m))
-if(n.z!=null){i=A.fY(n.x)
+if(n.z!=null&&f.a.a.length!==0&&s.a.a.length!==0){i=A.fY(n.x)
 i.toString
 h=n.w
 g=n.y
 g.toString
 o.push(A.cL("\u0627\u0644\u0643\u062a\u0644\u0629 / \u0627\u0644\u0639\u0645\u0631: "+A.aLM(i,h,g),m,m,m,A.cU(m,m,B.WY,m,m,m,m,m,k,m,m,20,m,m,B.bt,m,m,!0,m,m,m,m,m,m,m,m),m,m))}o.push(A.co(m,10,m))
-if(n.z!=null&&s.a.a.length!==0){i=A.arZ(n.w,2)?"\u0627\u0644\u0642\u0627\u0645\u0629":"\u0627\u0644\u0637\u0648\u0644"
-s=A.fY(s.a.a)
-s.toString
-h=n.w
-g=n.y
-g.toString
-o.push(A.cL(i+" / \u0627\u0644\u0639\u0645\u0631: "+A.aLK(s,h,g),m,m,m,A.cU(m,m,B.WX,m,m,m,m,m,k,m,m,20,m,m,B.bt,m,m,!0,m,m,m,m,m,m,m,m),m,m))}o.push(A.co(m,10,m))
-if(n.z!=null&&f.a.a.length!==0){i=A.fY(f.a.a)
+if(n.z!=null&&f.a.a.length!==0&&s.a.a.length!==0){i=A.arZ(n.w,2)?"\u0627\u0644\u0642\u0627\u0645\u0629":"\u0627\u0644\u0637\u0648\u0644"
+h=A.fY(s.a.a)
+h.toString
+g=n.w
+e=n.y
+e.toString
+o.push(A.cL(i+" / \u0627\u0644\u0639\u0645\u0631: "+A.aLK(h,g,e),m,m,m,A.cU(m,m,B.WX,m,m,m,m,m,k,m,m,20,m,m,B.bt,m,m,!0,m,m,m,m,m,m,m,m),m,m))}o.push(A.co(m,10,m))
+if(n.z!=null&&f.a.a.length!==0&&s.a.a.length!==0){i=A.fY(f.a.a)
 i.toString
 h=n.w
 g=n.y
@@ -36881,7 +36881,7 @@ i=A.cU(m,m,B.l,m,m,m,m,m,k,m,m,16,m,m,B.bt,m,m,!0,m,m,m,m,m,m,m,m)
 h=A.cU(m,m,B.eY,m,B.lt,m,m,m,m,m,m,m,m,m,m,m,m,!0,m,m,m,m,m,m,m,m)
 g=A.adb(m,m)
 g.bo=new A.afc()
-o.push(new A.e0(B.m6,m,m,new A.bZ(B.n9,A.ab0(m,m,m,B.cw,m,m,!0,m,A.ca(A.a([A.ca(m,g,h,"\u0639\u0628\u062f\u0627\u0644\u0631\u062d\u0645\u0646 \u0645\u0627\u0647\u0631"),A.ca(m,m,m," \u0627\u0633\u062a\u0646\u0627\u062f\u0627\u064b \u0627\u0644\u0649 \u0628\u064a\u0646\u0627\u062a \u0645\u0646\u0638\u0645\u0629 \u0627\u0644\u0635\u062d\u0629 \u0627\u0644\u0639\u0627\u0644\u0645\u064a\u0629")],t.VO),m,i,"\u062a\u0645 \u0627\u0639\u062f\u0627\u062f \u0627\u0644\u0628\u0631\u0646\u0627\u0645\u062c \u0628\u0648\u0627\u0633\u0637\u0629 \u0627\u0644\u0645\u0628\u0631\u0645\u062c "),B.iM,m,m,B.an,B.aN),m),m))
+o.push(new A.e0(B.m6,m,m,new A.bZ(B.n9,A.ab0(m,m,m,B.cw,m,m,!0,m,A.ca(A.a([A.ca(m,g,h,"\u0639\u0628\u062f\u0627\u0644\u0631\u062d\u0645\u0646 \u0645\u0627\u0647\u0631"),A.ca(m,m,m," \u0627\u0633\u062a\u0646\u0627\u062f\u0627\u064b \u0627\u0644\u0649 \u0628\u064a\u0627\u0646\u0627\u062a \u0645\u0646\u0638\u0645\u0629 \u0627\u0644\u0635\u062d\u0629 \u0627\u0644\u0639\u0627\u0644\u0645\u064a\u0629")],t.VO),m,i,"\u062a\u0645 \u0627\u0639\u062f\u0627\u062f \u0627\u0644\u0628\u0631\u0646\u0627\u0645\u062c \u0628\u0648\u0627\u0633\u0637\u0629 \u0627\u0644\u0645\u0628\u0631\u0645\u062c "),B.iM,m,m,B.an,B.aN),m),m))
 return new A.ye(new A.uk(j,new A.U_(m,m,1/0,56),m),new A.bZ(B.n9,A.j4(o,B.aF,B.ak,B.b6),m),m)}}
 A.aeZ.prototype={
 $0(){this.b.w=B.c.ai(this.a.a+this.c,1)+"y"},
